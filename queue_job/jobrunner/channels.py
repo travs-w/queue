@@ -133,7 +133,7 @@ class ChannelJob(object):
 
     Here are some examples.
 
-    j1 comes before j2 before it has a smaller date_created
+    j1 comes before j2 because it has an earlier date_created
 
     >>> j1 = ChannelJob(None, None, 1,
     ...                 seq=0, date_created=1, priority=9, eta=None)
@@ -536,7 +536,7 @@ class Channel(object):
         :param now: the current datetime in seconds
 
         :return: iterator of
-                 :class:`odoo.addons.queue_job.jobrunner.ChannelJob`
+                 :class:`openerp.addons.queue_job.jobrunner.ChannelJob`
         """
         # enqueue jobs of children channels
         for child in self.children.values():

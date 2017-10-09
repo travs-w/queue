@@ -5,7 +5,7 @@
 import logging
 from datetime import datetime, timedelta
 
-from odoo import models, fields, api, exceptions, _
+from openerp import models, fields, api, exceptions, _
 
 from ..job import STATES, DONE, PENDING, Job
 from ..fields import JobSerialized

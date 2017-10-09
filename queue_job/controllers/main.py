@@ -5,13 +5,13 @@
 
 import logging
 import traceback
-from cStringIO import StringIO
+from io import StringIO
 
 from psycopg2 import OperationalError
 
-import odoo
-from odoo import _, http, tools
-from odoo.service.model import PG_CONCURRENCY_ERRORS_TO_RETRY
+import openerp
+from openerp import _, http, tools
+from openerp.service.model import PG_CONCURRENCY_ERRORS_TO_RETRY
 
 from ..job import Job, ENQUEUED
 from ..exception import (NoSuchJobError,
@@ -68,7 +68,7 @@ class RunJobController(http.Controller):
     @http.route('/queue_job/runjob', type='http', auth='none')
     def runjob(self, db, job_uuid, **kw):
         http.request.session.db = db
-        env = http.request.env(user=odoo.SUPERUSER_ID)
+        env = http.request.env(user=openerp.SUPERUSER_ID)
 
         def retry_postpone(job, message, seconds=None):
             job.postpone(result=message, seconds=seconds)
@@ -95,8 +95,8 @@ class RunJobController(http.Controller):
                 _logger.debug('%s OperationalError, postponed', job)
 
         except NothingToDoJob as err:
-            if unicode(err):
-                msg = unicode(err)
+            if str(err):
+                msg = str(err)
             else:
                 msg = _('Job interrupted and set to Done: nothing to do.')
             job.set_done(msg)
@@ -105,7 +105,7 @@ class RunJobController(http.Controller):
 
         except RetryableJobError as err:
             # delay the job later, requeue
-            retry_postpone(job, unicode(err), seconds=err.seconds)
+            retry_postpone(job, str(err), seconds=err.seconds)
             _logger.debug('%s postponed', job)
 
         except (FailedJobError, Exception):
@@ -113,8 +113,8 @@ class RunJobController(http.Controller):
             traceback.print_exc(file=buff)
             _logger.error(buff.getvalue())
             job.env.clear()
-            with odoo.api.Environment.manage():
-                with odoo.registry(job.env.cr.dbname).cursor() as new_cr:
+            with openerp.api.Environment.manage():
+                with openerp.registry(job.env.cr.dbname).cursor() as new_cr:
                     job.env = job.env(cr=new_cr)
                     job.set_failed(exc_info=buff.getvalue())
                     job.store()

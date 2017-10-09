@@ -7,7 +7,7 @@ from datetime import datetime, date
 
 import dateutil
 
-from odoo import fields, models
+from openerp import fields, models
 
 
 class JobSerialized(fields.Field):

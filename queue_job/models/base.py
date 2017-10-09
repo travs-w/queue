@@ -4,7 +4,7 @@
 
 import inspect
 
-from odoo import models, api
+from openerp import models, api
 from ..job import DelayableRecordset
 
 
@@ -12,7 +12,7 @@ class Base(models.AbstractModel):
     """ The base model, which is implicitly inherited by all models. """
     _inherit = 'base'
 
-    @api.model_cr
+    @api.model
     def _register_hook(self):
         """ register marked jobs """
         super(Base, self)._register_hook()
@@ -30,7 +30,7 @@ class Base(models.AbstractModel):
         """ Return a ``DelayableRecordset``
 
         The returned instance allow to enqueue any method of the recordset's
-        Model which is decorated by :func:`~odoo.addons.queue_job.job.job`.
+        Model which is decorated by :func:`~openerp.addons.queue_job.job.job`.
 
         Usage::
 
@@ -53,7 +53,7 @@ class Base(models.AbstractModel):
                         the function. If specified it overrides the one
                         defined on the function
         :return: instance of a DelayableRecordset
-        :rtype: :class:`odoo.addons.queue_job.job.DelayableRecordset`
+        :rtype: :class:`openerp.addons.queue_job.job.DelayableRecordset`
 
         """
         return DelayableRecordset(self, priority=priority,
